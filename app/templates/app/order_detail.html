@@ -1,0 +1,139 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'my_orders' %}">Мои заказы</a></li>
+            <li class="breadcrumb-item active">Заказ #{{ order.id }}</li>
+        </ol>
+    </nav>
+
+    <h2>Заказ #{{ order.id }}</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Информация о заказе</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Дата заказа:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                            <p>
+                                <strong>Статус:</strong>
+                                <span class="badge
+                                    {% if order.status == 'delivered' %}bg-success
+                                    {% elif order.status == 'cancelled' %}bg-danger
+                                    {% elif order.status == 'processing' %}bg-warning
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </p>
+                            <p><strong>Общая стоимость:</strong> {{ order.total_price }} руб.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Адрес доставки:</strong> {{ order.address }}</p>
+                            <p><strong>Телефон:</strong> {{ order.phone }}</p>
+                            <p><strong>Клиент:</strong> {{ order.client.username }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Товары в заказе -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Товары в заказе</h5>
+                </div>
+                <div class="card-body">
+                    {% if order_items %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Количество</th>
+                                    <th>Цена</th>
+                                    <th>Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }} шт.</td>
+                                    <td>{{ item.price }} руб.</td>
+                                    <td>{{ item.product.price|floatformat:"2" }} руб.</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="table-success">
+                                    <td colspan="3" class="text-end"><strong>Итого:</strong></td>
+                                    <td><strong>{{ order.total_price }} руб.</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Товары не найдены</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Действия</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'my_orders' %}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="fas fa-arrow-left"></i> Назад к списку заказов
+                    </a>
+
+                    {% if order.status == 'pending' %}
+                    <button class="btn btn-outline-danger w-100 mb-2" disabled>
+                        <i class="fas fa-times"></i> Отменить заказ
+                    </button>
+                    <div class="alert alert-info mt-3">
+                        <small>
+                            <i class="fas fa-info-circle"></i>
+                            Чтобы отменить заказ, свяжитесь с менеджером по телефону
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-light mt-3">
+                        <h6><i class="fas fa-headset"></i> Контакты</h6>
+                        <p class="mb-1"><small>По вопросам по заказу:</small></p>
+                        <p class="mb-0"><small>Телефон: х ххх-ххх-хх-хх</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .breadcrumb {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 10px 15px;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+</style>
+{% endblock %}

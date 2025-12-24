@@ -1,0 +1,69 @@
+{% extends 'app/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Похожие места</h2>
+    <p class="lead">Сюда можно приехать пообщаться с лошадьми, а также записаться на верховые занятия, экскурсии, и не только. Все хозяйства расположены в Псковской области</p>
+
+    <div class="row mt-5">
+        <!-- Ресурс 1 -->
+        <div class="col-md-4 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <a href="https://vk.com/konipskov?from=groups" target="_blank">
+                        <img src="{% static 'app/content/Rodina.jpg' %}" alt="Родина" class="img-fluid" style="max-height: 80px;" />
+                    </a>
+                    <h5 class="card-title mt-3">КСК "Родина"</h5>
+                    <p class="card-text">На базе клуба расположилась детская спортивная школа. А ещё здесь проходят занятия по иппотерапии.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ресурс 2 -->
+        <div class="col-md-4 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <a href="https://vk.com/spkpkzpskovsky?from=groups" target="_blank">
+                        <img src="{% static 'app/content/PKZ.jpg' %}" alt="ПКЗ" class="img-fluid" style="max-height: 80px;" />
+                    </a>
+                    <h5 class="card-title mt-3">Псковский конный завод</h5>
+                    <p class="card-text">Расположен в Порхове на территории исторической усадьбы Волышово. В данное время в хозяйстве 430 дойных коров, 
+                    общее поголовье составляет около 900 голов, лошадей русской рысистой породы – 68 голов.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ресурс 3 -->
+        <div class="col-md-4 text-center mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <a href="https://vk.com/molgovomanor?from=groups" target="_blank">
+                        <img src="{% static 'app/content/Molgovo.jpg' %}" alt="Молгово" I" class="img-fluid" style="max-height: 80px;" />
+                    </a>
+                    <h5 class="card-title mt-3">КК "Молгово"</h5>
+                    <p class="card-text">
+                        Конный клуб "Усадьба Молгово" располагается в тихом живописном месте в 12 км от города Пскова, в 300 м от Псковского озера в окружении вековых сосен.
+                        В клубе созданы все условия для лошадей, их владельцев и гостей.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- Локальные ресурсы Псковской области -->
+    <div class="mt-5">
+        <h4>Региональные ресурсы</h4>
+        <div class="list-group">
+            <a href="https://ck-pskov.ru/fermery/" target="_blank" class="list-group-item list-group-item-action">
+                АНО «Центр компетенций в сфере сельскохозяйственной кооперации и поддержки фермеров»
+            </a>
+            <a href="https://cx.pskov.ru/" target="_blank" class="list-group-item list-group-item-action">
+                Министерство сельского хозяйства Псковской области
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

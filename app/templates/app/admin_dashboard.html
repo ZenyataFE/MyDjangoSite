@@ -1,0 +1,136 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2><i class="fas fa-tachometer-alt"></i> Панель управления сайтом</h2>
+    <p class="text-muted">Обзор статистики и быстрый доступ к управлению контентом</p>
+
+    <!-- Статистика -->
+    <div class="row mt-4">
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h3>{{ stats.users_count }}</h3>
+                    <p class="card-text">Пользователей</p>
+                    <a href="{% url 'admin_users' %}" class="btn btn-light btn-sm">Управление</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h3>{{ stats.products_count }}</h3>
+                    <p class="card-text">Товаров</p>
+                    <a href="{% url 'admin_products' %}" class="btn btn-light btn-sm">Управление</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h3>{{ stats.categories_count }}</h3>
+                    <p class="card-text">Категорий</p>
+                    <a href="{% url 'admin_categories' %}" class="btn btn-light btn-sm">Управление</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h3>{{ stats.orders_count }}</h3>
+                    <p class="card-text">Заказов</p>
+                    <a href="{% url 'manager_orders' %}" class="btn btn-light btn-sm">Просмотр</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Быстрые действия</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'admin_product_add' %}" class="btn btn-success btn-block">
+                                <i class="fas fa-plus"></i> Добавить товар
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'admin_category_add' %}" class="btn btn-info btn-block">
+                                <i class="fas fa-folder-plus"></i> Добавить категорию
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'newpost' %}" class="btn btn-primary btn-block">
+                                <i class="fas fa-edit"></i> Добавить статью
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Последние действия -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Последние товары</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_products %}
+                    <div class="list-group">
+                        {% for product in recent_products %}
+                        <a href="{% url 'admin_product_edit' product.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ product.name }}</h6>
+                                <small>{{ product.created_at|date:"d.m.Y" }}</small>
+                            </div>
+                            <p class="mb-1">{{ product.price }} руб.</p>
+                            <small class="text-muted">{{ product.category.name }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Товары не добавлены</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Последние заказы</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_orders %}
+                    <div class="list-group">
+                        {% for order in recent_orders %}
+                        <a href="{% url 'manager_orders' %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Заказ #{{ order.id }}</h6>
+                                <small>{{ order.created_at|date:"d.m.Y" }}</small>
+                            </div>
+                            <p class="mb-1">{{ order.client.username }}</p>
+                            <small class="text-muted">{{ order.get_status_display }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Заказы отсутствуют</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

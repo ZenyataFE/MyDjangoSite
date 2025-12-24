@@ -1,0 +1,318 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Сообщения -->
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message|safe }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'catalog' %}">Каталог</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'category_products' product.category.id %}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Изображение товара -->
+        <div class="col-md-6">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 400px; width: 100%; object-fit: contain;">
+            {% else %}
+            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                <span class="text-muted">Нет изображения</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Информация о товаре -->
+        <div class="col-md-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            <p class="text-muted mb-2">Категория: {{ product.category.name }}</p>
+            <p class="h2 text-success mb-3">{{ product.price }} руб.</p>
+
+            <!-- Статус наличия -->
+            {% if product.in_stock %}
+            <span class="badge bg-success fs-6 mb-3">В наличии</span>
+            {% else %}
+            <span class="badge bg-danger fs-6 mb-3">Нет в наличии</span>
+            {% endif %}
+
+            <!-- Информация о количестве в корзине -->
+            {% if user.is_authenticated and cart_quantity > 0 %}
+            <div class="alert alert-success mt-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-shopping-cart"></i>
+                        <strong>В вашей корзине:</strong> {{ cart_quantity }} шт.
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Описание товара -->
+            <div class="mb-4">
+                <h4>Описание:</h4>
+                <p class="fs-5">{{ product.description|linebreaksbr }}</p>
+            </div>
+
+            <!-- Кнопки в зависимости от роли пользователя -->
+            {% if user.is_authenticated %}
+            {% if user.userprofile.role == 'client' and product.in_stock %}
+            <!-- Для клиентов - три кнопки одинакового размера ГОРИЗОНТАЛЬНО -->
+            <div class="row g-2 mt-4">
+                <div class="col-4">
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center py-3">
+                        <i class="fas fa-cart-plus me-2"></i>
+                        <span class="fw-bold">ДОБАВИТЬ В КОРЗИНУ</span>
+                    </a>
+                </div>
+
+                <div class="col-4">
+                    {% if cart_quantity > 0 %}
+                    <a href="{% url 'cart' %}" class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center py-3">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        <span class="fw-bold">КОРЗИНА</span>
+                        <span class="badge bg-light text-dark ms-2">{{ cart_quantity }}</span>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'cart' %}" class="btn btn-info btn-lg w-100 d-flex align-items-center justify-content-center py-3">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        <span class="fw-bold">КОРЗИНА</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="col-4">
+                    <a href="{% url 'catalog' %}" class="btn btn-warning btn-lg w-100 d-flex align-items-center justify-content-center py-3">
+                        <i class="fas fa-store me-2"></i>
+                        <span class="fw-bold">ПРОДОЛЖИТЬ ПОКУПКИ</span>
+                    </a>
+                </div>
+            </div>
+
+            {% elif user.userprofile.role in 'manager,admin' %}
+            <!-- Для менеджеров и администраторов -->
+            <div class="alert alert-warning">
+                <h5><i class="fas fa-exclamation-triangle"></i> Функция покупок недоступна</h5>
+                <p>
+                    Вы не можете добавлять товары в корзину, так как являетесь
+                    <strong>{{ user.userprofile.get_role_display|lower }}</strong>.
+                </p>
+                <p>Эта функция доступна только клиентам.</p>
+                <div class="mt-3">
+                    <a href="{% url 'catalog' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-arrow-left"></i> Вернуться в каталог
+                    </a>
+                    {% if user.userprofile.role == 'manager' %}
+                    <a href="{% url 'manager_orders' %}" class="btn btn-outline-success">
+                        <i class="fas fa-clipboard-list"></i> Управление заказами
+                    </a>
+                    {% elif user.userprofile.role == 'admin' %}
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-success">
+                        <i class="fas fa-cogs"></i> Панель управления
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% elif not product.in_stock %}
+            <!-- Товар отсутствует -->
+            <div class="alert alert-warning">
+                <h5><i class="fas fa-exclamation-circle"></i> Товар временно отсутствует</h5>
+                <p>Свяжитесь с нами для уточнения сроков поступления</p>
+                <div class="mt-3">
+                    <a href="{% url 'contact' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-phone"></i> Связаться с нами
+                    </a>
+                    <a href="{% url 'catalog' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-store"></i> Другие товары
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- Для неавторизованных пользователей -->
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Для покупок необходимо авторизоваться</h5>
+                <p>Только зарегистрированные клиенты могут добавлять товары в корзину.</p>
+                <div class="row g-2 mt-3">
+                    <div class="col-6">
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center py-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span class="fw-bold">ВОЙТИ</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'registration' %}" class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center py-3">
+                            <i class="fas fa-user-plus me-2"></i>
+                            <span class="fw-bold">РЕГИСТРАЦИЯ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Стили -->
+<style>
+    .breadcrumb {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 10px 15px;
+    }
+
+    .breadcrumb-item a {
+        color: #4caf50;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    /* Стили для трех кнопок одинакового размера в одну строку */
+    .btn-lg {
+        font-size: 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border: 2px solid transparent;
+        font-weight: 500;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+        .btn-lg:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+    .py-3 {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .g-2 {
+        gap: 10px;
+    }
+
+    /* Простые цвета без градиентов */
+    .btn-primary {
+        background-color: #4caf50;
+        border-color: #45a049;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+            border-color: #3d8b40;
+        }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #218838;
+        color: white;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #138496;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #e0a800;
+        color: #212529;
+        font-weight: 600;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #c69500;
+            color: #212529;
+        }
+
+    /* Бейдж на кнопке корзины */
+    .badge {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+
+        .card-img-top:hover {
+            transform: scale(1.02);
+        }
+
+    /* Мобильная адаптация */
+    @media (max-width: 768px) {
+        .row.g-2 {
+            flex-direction: column;
+        }
+
+        .col-4, .col-6 {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+
+        .btn-lg {
+            height: 60px;
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .btn-lg {
+            height: 55px;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+
+            .btn-lg .fw-bold {
+                font-size: 0.9rem;
+            }
+
+            .btn-lg .me-2 {
+                margin-right: 5px;
+            }
+    }
+</style>
+{% endblock %}

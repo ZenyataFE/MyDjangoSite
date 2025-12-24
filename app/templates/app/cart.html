@@ -1,0 +1,130 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>🛒 Корзина покупок</h2>
+
+    <!-- Сообщения -->
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart"></i>
+                        Товары в корзине ({{ cart_items|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="row align-items-center mb-3 pb-3 border-bottom">
+                        <div class="col-md-2">
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                 class="img-fluid rounded" style="max-height: 80px;">
+                            {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                 style="width: 80px; height: 80px;">
+                                <span class="text-muted">Нет фото</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-1">{{ item.product.name }}</h6>
+                            <small class="text-muted">{{ item.product.category.name }}</small>
+                        </div>
+                        <div class="col-md-2">
+                            <p class="h6 text-success">{{ item.product.price }} руб.</p>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="d-flex align-items-center">
+                                <form method="post" action="{% url 'update_cart' item.id %}" class="d-flex">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}"
+                                           min="1" max="10" class="form-control form-control-sm"
+                                           style="width: 70px;" onchange="this.form.submit()">
+                                </form>
+                                <small class="ms-2 text-muted">шт.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <p class="h6">{{ item.total_price }} руб.</p>
+                            <form method="post" action="{% url 'remove_from_cart' item.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📋 Итого</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Товары ({{ cart_items|length }}):</span>
+                        <span>{{ total_price }} руб.</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Доставка:</span>
+                        <span class="text-success">Бесплатно</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Общая сумма:</strong>
+                        <strong class="h5 text-success">{{ total_price }} руб.</strong>
+                    </div>
+
+                    <a href="{% url 'create_order' %}" class="btn btn-success btn-lg w-100 mb-2">
+                        <i class="fas fa-credit-card"></i> Оформить заказ
+                    </a>
+
+                    <a href="{% url 'catalog' %}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-store"></i> Продолжить покупки
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">Ваша корзина пуста</h4>
+            <p class="text-muted">Добавьте товары из каталога, чтобы сделать заказ</p>
+            <a href="{% url 'catalog' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-store"></i> Перейти в каталог
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-warning">
+        <h4>Доступ к корзине только для зарегистрированных клиентов</h4>
+        <p>Пожалуйста, войдите в систему или зарегистрируйтесь для совершения покупок</p>
+        <div class="mt-3">
+            <a href="{% url 'login' %}" class="btn btn-primary me-2">Войти</a>
+            <a href="{% url 'registration' %}" class="btn btn-success">Зарегистрироваться</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

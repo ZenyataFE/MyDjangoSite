@@ -1,0 +1,68 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Добавить новую статью</h2>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Заголовок статьи</label>
+                            {{ blogform.title }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Краткое содержание</label>
+                            {{ blogform.description }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Полное содержание</label>
+                            {{ blogform.content }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Изображение статьи</label>
+                            {{ blogform.image }}
+                            <div class="form-text">Рекомендуемый размер: 800x400px</div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-plus"></i> Добавить статью
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'blog' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Назад к блогу
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    form input, form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    form textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+</style>
+{% endblock %}

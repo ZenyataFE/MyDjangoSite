@@ -1,0 +1,135 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Обратная связь</h2>
+    <p class="lead">Пожалуйста, поделитесь вашим мнением о нашем сайте. Ваши отзывы помогают нам становиться лучше!</p>
+
+    {% if form != None %}
+    <!-- Форма для заполнения -->
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <form method="post" id="feedbackForm">
+                {% csrf_token %}
+
+                <!-- Основная информация -->
+                <div class="mb-4">
+                    <h4 class="mb-3">Основная информация</h4>
+                    <div class="form-group">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <div class="text-danger">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.visit_frequency.label_tag }}
+                        {{ form.visit_frequency }}
+                    </div>
+                </div>
+
+                <!-- Оценка сайта -->
+                <div class="mb-4">
+                    <h4 class="mb-3">Оценка сайта</h4>
+                    <div class="form-group">
+                        {{ form.rating.label_tag }}
+                        <div class="rating-group">
+                            {{ form.rating }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Улучшения -->
+                <div class="mb-4">
+                    <h4 class="mb-3">Предложения по улучшению</h4>
+                    <div class="form-group">
+                        {{ form.improvements.label_tag }}
+                        <div class="improvements-group">
+                            {{ form.improvements }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.comments.label_tag }}
+                        {{ form.comments }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Отправить отзыв</button>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Благодарность и результаты -->
+    <div class="alert alert-success mt-4">
+        <h4>Спасибо за ваш отзыв, {{ data.name }}!</h4>
+       
+    </div>
+
+    <div class="mt-4">
+        <h5>Ваш отзыв:</h5>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p><strong>Имя:</strong> {{ data.name }}</p>
+                <p><strong>Email:</strong> {{ data.email }}</p>
+                <p><strong>Частота посещений:</strong> {{ data.visit_frequency }}</p>
+            
+                <p><strong>Комментарии:</strong> {{ data.comments }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'pool' %}" class="btn btn-secondary">Заполнить ещё один отзыв</a>
+        <a href="{% url 'home' %}" class="btn btn-primary">Вернуться на главную</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // JavaScript для визуальных эффектов
+    document.addEventListener('DOMContentLoaded', function () {
+        const submitBtn = document.getElementById('submitBtn');
+        const formInputs = document.querySelectorAll('input, textarea, select');
+
+        // Эффект при наведении на кнопку
+        if (submitBtn) {
+            submitBtn.addEventListener('mouseenter', function () {
+                this.style.color = '#ffffff';
+                this.style.backgroundColor = '#0056b3';
+            });
+
+            submitBtn.addEventListener('mouseleave', function () {
+                this.style.color = '';
+                this.style.backgroundColor = '';
+            });
+        }
+
+        // Эффект при фокусе на полях ввода
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.style.backgroundColor = '#f8f9fa';
+                this.style.borderColor = '#007bff';
+            });
+
+            input.addEventListener('blur', function () {
+                this.style.backgroundColor = '';
+                this.style.borderColor = '';
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin-top: 80px;">
+    <h2 class="text-center mb-5">{{ title }}</h2>
+
+    <div class="row">
+        <!-- Видео 1 -->
+        <div class="col-md-6 mb-5">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-3">Жизнь на ферме</h4>
+                    <div class="text-center">
+                        <video controls width="100%" style="max-width: 500px;" poster="/media/video-poster1.jpg">
+                            <source src="/media/farm-life.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео тег.
+                        </video>
+                    </div>
+                    <p class="card-text mt-3 text-center">Повседневная жизнь на нашей ферме - уход за животными и сбор урожая.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Видео 2 -->
+        <div class="col-md-6 mb-5">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-3">Наши животные</h4>
+                    <div class="text-center">
+                        <video controls width="100%" style="max-width: 500px;" poster="/media/video-poster2.jpg">
+                            <source src="/media/farm-animals.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео тег.
+                        </video>
+                    </div>
+                    <p class="card-text mt-3 text-center">Знакомство с обитателями фермы - коровы, козы, куры и лошади.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-success">
+            <i class="fas fa-arrow-left"></i> На главную
+        </a>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    video {
+        border-radius: 8px;
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+    }
+
+    .alert-info {
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}

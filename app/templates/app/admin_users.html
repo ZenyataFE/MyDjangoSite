@@ -1,0 +1,55 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Управление пользователями</h2>
+
+    <div class="mb-4">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">← Назад в панель управления</a>
+    </div>
+
+    {% if users %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-info">
+                <tr>
+                    <th>ID</th>
+                    <th>Имя пользователя</th>
+                    <th>Email</th>
+                    <th>Имя</th>
+                    <th>Роль</th>
+                    <th>Дата регистрации</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                        <strong>{{ user.username }}</strong>
+                        {% if user.is_superuser %}
+                        <span class="badge bg-danger">Суперпользователь</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.email|default:"—" }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>
+                        {% if user.userprofile %}
+                        <span class="badge bg-secondary">{{ user.userprofile.role }}</span>
+                        {% else %}
+                        <span class="badge bg-warning">Нет профиля</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.date_joined|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <h4>Пользователи не найдены</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

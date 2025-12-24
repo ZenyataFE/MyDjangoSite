@@ -1,0 +1,189 @@
+﻿{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- СЛАЙДЕР КАРУСЕЛЬ -->
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="4000">
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+        <li data-target="#myCarousel" data-slide-to="3"></li>
+    </ol>
+
+    <div class="carousel-inner" role="listbox">
+        <!-- Слайд 1 -->
+        <div class="item active">
+            <img src="{% static 'app/content/ferm.jpg' %}" alt="Наши животные" class="img-responsive" style="width: 100%; height: 500px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <h3>Наши животные</h3>
+                <p>Лошадки, коровы, козы и куры</p>
+                <a class="btn btn-success" href="{% url 'blog' %}">
+                    Узнать больше
+                </a>
+            </div>
+        </div>
+
+        <!-- Слайд 2 -->
+        <div class="item">
+            <img src="{% static 'app/content/Selo.jpg' %}" alt="Сельская природа" class="img-responsive" style="width: 100%; height: 500px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <h3>Экологически чистая продукция</h3>
+                <p>Натуральные молочные продукты прямо с фермы</p>
+                <a class="btn btn-success" href="{% url 'about' %}">
+                    О нашей ферме
+                </a>
+            </div>
+        </div>
+
+        <!-- Слайд 3 -->
+        <div class="item">
+            <img src="{% static 'app/content/pr2.avif' %}" alt="Молочная продукция" class="img-responsive" style="width: 100%; height: 500px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <h3>Свежие молочные продукты</h3>
+                <p>Молоко, творог, сметана, масло и сыры</p>
+                <a class="btn btn-success" href="{% url 'contact' %}">
+                    Связаться с нами
+                </a>
+            </div>
+        </div>
+
+        <!-- Слайд 4 -->
+        <div class="item">
+            <img src="{% static 'app/content/shea.jpg' %}" alt="Фермерский быт" class="img-responsive" style="width: 100%; height: 500px; object-fit: cover;" />
+            <div class="carousel-caption" role="option">
+                <h3>Досуг на природе</h3>
+                <p>Общение с лошадьми</p>
+                <a class="btn btn-success" href="{% url 'links' %}">
+                    Полезные ресурсы
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Стрелки навигации -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Назад</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Вперед</span>
+    </a>
+</div>
+
+<!-- ОСНОВНОЕ СОДЕРЖАНИЕ ГЛАВНОЙ СТРАНИЦЫ -->
+<div class="container" style="margin-top: 80px;">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-success">Добро пожаловать на ферму "Руно"!</h1>
+        <p class="lead fs-4">Место, где можно окунуться в сельскую жизнь</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-12">
+            <div class="p-4 bg-light rounded-3">
+                <h3 class="text-center mb-4">Что мы предлагаем:</h3>
+
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <h4 class="text-success">🥛 Натуральная продукция</h4>
+                            <p>Ассортимент свежих молочных продуктов</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <h4 class="text-success">🐴 Знакомство с животными</h4>
+                            <p>Узнайте как живут наши подопечные, погладьте их и угостите вкусняшками</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <h4 class="text-success">🌾 Фермерский опыт</h4>
+                            <p>Погрузитесь в повседневную жизнь фермы, ухаживайте за животными и почувствуйте связь с природой</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="fst-italic text-muted">Присоединяйтесь к нам и откройте для себя настоящий вкус сельской жизни!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Блок с последними статьями блога -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3 class="text-center mb-4">Последние статьи из нашего блога</h3>
+            <div class="row">
+                {% for post in posts|slice:":3" %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.description|truncatewords:20 }}</p>
+                            <a href="{% url 'blogpost' parametr=post.id %}" class="btn btn-outline-success">Читать далее</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'blog' %}" class="btn btn-success">Все статьи блога</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Стили для карусели */
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+        .carousel-caption h3 {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .carousel-caption p {
+            color: #f8f9fa;
+            font-size: 1.1rem;
+        }
+
+    .carousel-control {
+        background: none !important;
+    }
+
+    .carousel-indicators li {
+        background-color: #ccc;
+        border: 1px solid #fff;
+    }
+
+    .carousel-indicators .active {
+        background-color: #4caf50;
+    }
+
+    /* Анимация для карточек */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+    {% load static %}
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+{% endblock %}

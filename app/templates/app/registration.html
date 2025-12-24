@@ -1,0 +1,130 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h2>Регистрация пользователя</h2>
+<div class="row">
+    <div class="col-md-8">
+        <section id="registrationForm">
+            <form method="POST" class="form-horizontal">
+                {% csrf_token %}
+                <h4>Создайте новую учетную запись</h4>
+                <hr />
+
+                <!-- Основная информация -->
+                <div class="form-group">
+                    <label for="id_username" class="col-md-2 control-label">Имя пользователя</label>
+                    <div class="col-md-10">
+                        {{ regform.username }}
+                        <div class="form-text">
+                            <small>• Только английские буквы, цифры и символы @/./+/-/_</small><br>
+                            <small>• Не более 150 символов</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_first_name" class="col-md-2 control-label">Имя</label>
+                    <div class="col-md-10">
+                        {{ regform.first_name }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_last_name" class="col-md-2 control-label">Фамилия</label>
+                    <div class="col-md-10">
+                        {{ regform.last_name }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email" class="col-md-2 control-label">Email</label>
+                    <div class="col-md-10">
+                        {{ regform.email }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_phone" class="col-md-2 control-label">Телефон</label>
+                    <div class="col-md-10">
+                        {{ regform.phone }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_address" class="col-md-2 control-label">Адрес</label>
+                    <div class="col-md-10">
+                        {{ regform.address }}
+                    </div>
+                </div>
+
+                <!-- Пароли -->
+                <div class="form-group">
+                    <label for="id_password1" class="col-md-2 control-label">Пароль</label>
+                    <div class="col-md-10">
+                        {{ regform.password1 }}
+                        <div class="form-text">
+                            <small>• Минимум 8 символов</small><br>
+                            <small>• Не должен быть слишком простым</small><br>
+                            <small>• Не должен состоять только из цифр</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password2" class="col-md-2 control-label">Подтверждение пароля</label>
+                    <div class="col-md-10">
+                        {{ regform.password2 }}
+                        <div class="form-text">
+                            <small>• Введите тот же пароль еще раз для подтверждения</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-success">Зарегистрировать</button>
+                    </div>
+                </div>
+
+                {% if regform.errors %}
+                <p class="validation-summary-errors text-danger">
+                    Пожалуйста, исправьте ошибки в форме.
+                </p>
+                {% endif %}
+            </form>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section id="registrationInfo">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Уже есть учетная запись?</h5>
+                    <p>Войдите в систему</p>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                        Войти
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+    .form-text {
+        margin-top: 5px;
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+        .form-text small {
+            line-height: 1.3;
+        }
+
+    .card {
+        margin-bottom: 0;
+    }
+</style>
+
+{% endblock %}

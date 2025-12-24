@@ -1,0 +1,134 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Добавляем отступ сверху для фиксированной шапки -->
+<div class="container" style="margin-top: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <article>
+                <h1 class="text-center mb-4">{{ post_1.title }}</h1>
+                <!-- Добавьте после заголовка статьи -->
+                {% if post_1.image and post_1.image.url != '/media/temp.jpg' %}
+                <div class="text-center mb-4">
+                    <img src="{{ post_1.image.url }}" alt="Картинка статьи блога" class="img-fluid rounded" style="max-height: 400px; width: auto;" />
+                </div>
+                {% endif %}
+                <div class="text-center text-muted mb-4">
+                    <small>
+                        <i class="far fa-calendar-alt"></i> Опубликовано: {{ post_1.posted|date:"d.m.Y H:i" }}
+                        {% if post_1.author %}
+                        | <i class="fas fa-user"></i> Автор: {{ post_1.author.username }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                <!-- Увеличиваем только полное содержание статьи -->
+                <div class="blog-content" style="font-size: 1.5rem; line-height: 1.8;">
+                    {{ post_1.content|linebreaksbr }}
+                </div>
+
+                <!-- РАЗДЕЛ КОММЕНТАРИЕВ -->
+                <div class="comments-section mt-5">
+                    <h3 class="mb-4" style="color: #2d5016;">
+                        <i class="fas fa-comments"></i> Комментарии ({{ comments.count }})
+                    </h3>
+
+                    <!-- Форма добавления комментария -->
+                    {% if user.is_authenticated %}
+                    <div class="card mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-edit"></i> Добавить комментарий</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {{ form.as_p }}
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-paper-plane"></i> Отправить комментарий
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Для добавления комментария, пожалуйста, авторизуйтесь</h5>
+                        <a href="{% url 'login' %}" class="btn btn-outline-success mt-2">Войти</a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Список комментариев -->
+                    {% for comment in comments %}
+                    <div class="card mb-3 comment-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="card-title comment-author">
+                                    <i class="fas fa-user"></i> {{ comment.author.username }}
+                                </h5>
+                                <small class="text-muted comment-date">
+                                    <i class="far fa-clock"></i> {{ comment.date|date:"d.m.Y H:i" }}
+                                </small>
+                            </div>
+                            <p class="card-text comment-text">{{ comment.text|linebreaksbr }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Пока нет комментариев. Будьте первым!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'blog' %}" class="btn btn-outline-success">
+                        <i class="fas fa-arrow-left"></i> Назад к списку статей
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<style>
+    .blog-content {
+        text-align: justify;
+    }
+
+        .blog-content p {
+            margin-bottom: 1.8rem;
+        }
+
+    /* Стили для комментариев */
+    .comment-card {
+        border-left: 4px solid #4caf50;
+        transition: transform 0.2s ease;
+    }
+
+        .comment-card:hover {
+            transform: translateX(5px);
+        }
+
+    .comment-author {
+        color: #2d5016;
+        font-weight: 600;
+    }
+
+    .comment-date {
+        font-size: 0.9rem;
+    }
+
+    .comment-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    .comments-section {
+        border-top: 2px solid #e9ecef;
+        padding-top: 2rem;
+    }
+</style>
+{% endblock %}
